@@ -1,3 +1,12 @@
+/**
+
+Created By: Andrew - andrew@wizno.net
+
+Created On: 2017-08-05 09:28:20
+
+Last Modified: 2017-08-07 20:55:46
+
+**/
 public with sharing class ObjectLookupController {
 
 	/**
