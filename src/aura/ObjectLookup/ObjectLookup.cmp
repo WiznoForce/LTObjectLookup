@@ -1,0 +1,153 @@
+<aura:component controller="Wizno.ObjectLookupController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome" access="global">
+
+<!-- USER INPUT -->
+<aura:attribute name="sObjectAPIName" type="String" required="true" default="Account"/>
+
+<!-- Form Element -->
+<aura:attribute name="formElementClass" type="String"/>
+
+<!-- Search Label -->
+<aura:attribute name="searchLabel" type="String" required="true" default="Search Accounts"/>
+
+<!-- Input -->
+<aura:attribute name="inputId" type="String" default="myInputField"/>
+<aura:attribute name="listId" type="String" default="myInputFieldList"/>
+<aura:attribute name="inputPlaceholder" type="String" required="true" default="Search for..."/>
+
+
+<!-- Lightning Icon: Search -->
+<aura:attribute name="searchIconAlternativeText" type="String" default=""/>
+<aura:attribute name="searchIconLightningIconClass" type="String" default=""/>
+<aura:attribute name="searchIconIconName" type="String" default="utility:search"/>
+<aura:attribute name="searchIconIconSize" type="String" default="x-small"/>
+<aura:attribute name="searchIconIconTitle" type="String" default="Search"/>
+<aura:attribute name="searchIconIconVariant" type="String" default=""/>
+
+<!-- Lightning Icon: SObject -->
+<aura:attribute name="sObjectAlternativeText" type="String" default=""/>
+<aura:attribute name="sObjectLightningIconClass" type="String" default=""/>
+<aura:attribute name="sObjectIconName" type="String" default="standard:account"/>
+<aura:attribute name="sObjectIconSize" type="String" default=""/>
+<aura:attribute name="sObjectIconTitle" type="String" default=""/>
+<aura:attribute name="sObjectIconVariant" type="String" default=""/>
+
+<!-- Record -->
+<aura:attribute name="records" type="Object[]"/>
+<aura:attribute name="selectedRecordName" type="String"/>
+<aura:attribute name="selectedRecordId" type="String"/>
+
+<!-- Init -->
+<aura:handler name="init" action="{!c.init}" value="{!this}"/>
+
+<!-- Events/Handlers -->
+<aura:registerEvent name="ObjectLookupEvent" type="c:ObjectLookupEvent"/>
+<aura:handler name="ObjectLookupEvent" event="c:ObjectLookupEvent" action="{!c.handleObjectLookupEvent}"/>
+
+
+
+<!-- Form Element -->
+<div class="{! 'slds-form-element ' + v.formElementClass}">
+	<label class="slds-form-element__label" for="{!v.inputId}">{!v.searchLabel}</label>
+	<div class="slds-form-element__control">
+		<div aura:id="comboLookupContainer" class="slds-combobox_container slds-has-inline-listbox">
+			<div aura:id="comboLookupWrap" class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-combobox-lookup" aria-expanded="false" aria-haspopup="listbox" role="combobox">
+				<div class="{! empty(v.selectedRecordId) ? 'slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right' : 'slds-combobox__form-element slds-input-has-icon slds-input-has-icon_left-right' }">
+					<!-- LIGHTNING ICON: SOBJECT -->
+					<aura:if isTrue="{! !empty(v.selectedRecordId) }">
+						<lightning:icon
+							alternativeText="{!v.sObjectAlternativeText}"
+							class="slds-icon_container slds-icon-standard-account slds-combobox__input-entity-icon"
+							iconName="{!v.sObjectIconName}"
+							size="{!v.sObjectIconSize}"
+							title="{!v.sObjectIconTitle}"
+							variant="{!v.sObjectIconVariant}"
+						/>
+					</aura:if>
+					<input 
+						type="text" 
+						class="slds-input slds-combobox__input" 
+						id="{!v.inputId}" 
+						aria-autocomplete="list" 
+						aria-controls="{!v.listId}" 
+						autocomplete="off" 
+						role="textbox" 
+						placeholder="{!v.inputPlaceholder}"
+						onfocus="{!c.handleInputFocus}"
+						onblur="{!c.handleInputBlur}"
+						onkeyup="{!c.handleKeyup}"
+						value="{!v.selectedRecordName}"
+						readonly="{! !empty(v.selectedRecordName) ? true : false }"
+						aura:id="inputTextbox"
+					/>
+
+					<!-- RECORD SELECTED BUTTON ICON -->
+					<aura:if isTrue="{! !empty(v.selectedRecordId) }">
+						<lightning:buttonIcon iconName="utility:close" alternativeText="Remove selected option" size="small" variant="bare" class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" onclick="{!c.handleClearInput}"/>
+					</aura:if>
+
+					<!-- LIGHTNING ICON: SEARCH ICON -->
+					<aura:if isTrue="{! empty(v.selectedRecordId) }">
+						<lightning:icon
+							alternativeText="{!v.searchIconAlternativeText}"
+							class="{! 'slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right ' + v.searchIconLightningIconClass}"
+							iconName="{!v.searchIconIconName}"
+							size="{!v.searchIconIconSize}"
+							title="{!v.searchIconIconTitle}"
+							variant="{!v.searchIconIconVariant}"
+						/>
+					</aura:if>
+
+				</div>
+				<div id="{!v.listId}" role="listbox">
+					<ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid" role="presentation">
+						<aura:iteration items="{!v.records}" var="r" indexVar="rIndex">
+							<li role="presentation" class="slds-listbox__item" onclick="{!c.handleOptionSelected}" id="{! 'listbox-selection-item_' + rIndex}" data-record-id="{!r.Id}" data-record-name="{!r.Name}">
+								<span id="{! 'listbox-option-unique-id-' + rIndex }" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+									<span class="slds-media__figure">
+										<!-- ITERATIVE -->
+										<!-- LIGHTNING ICON: SOBJECT -->
+										<lightning:icon
+											alternativeText="{!v.sObjectAlternativeText}"
+											class="{!'slds-icon_container ' + v.sObjectLightningIconClass}"
+											iconName="{!v.sObjectIconName}"
+											size="{!v.sObjectIconSize}"
+											title="{!v.sObjectIconTitle}"
+											variant="{!v.sObjectIconVariant}"
+										/>
+									</span>
+									<span class="slds-media__body">
+										<span class="slds-listbox__option-text slds-listbox__option-text_entity">{!r.Name}</span>
+										<!-- TODO -->
+										<!-- <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">Account • San Francisco</span> -->
+									</span>
+								</span>
+							</li>
+						</aura:iteration>
+						<aura:if isTrue="{! empty(v.records) }">
+							<li role="presentation" class="slds-listbox__item" id="listbox-selection-item_000">
+								<span id="listbox-option-unique-id-000" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+									<span class="slds-media__figure">
+										<!-- ITERATIVE -->
+										<!-- LIGHTNING ICON: SOBJECT -->
+										<lightning:icon
+											alternativeText="{!v.sObjectAlternativeText}"
+											class="{!'slds-icon_container ' + v.sObjectLightningIconClass}"
+											iconName="{!v.sObjectIconName}"
+											size="{!v.sObjectIconSize}"
+											title="{!v.sObjectIconTitle}"
+											variant="{!v.sObjectIconVariant}"
+										/>
+									</span>
+									<span class="slds-media__body">
+										<span class="slds-listbox__option-text slds-listbox__option-text_entity">No Records Found</span>
+									</span>
+								</span>
+							</li>
+						</aura:if>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</aura:component>

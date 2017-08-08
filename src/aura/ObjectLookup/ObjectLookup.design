@@ -1,0 +1,6 @@
+<design:component label="Object Lookup">
+	<design:attribute name="sObjectAPIName" label="API Name of Lookup Object"></design:attribute>
+	<design:attribute name="searchLabel" label="Label Text"></design:attribute>
+	<design:attribute name="inputPlaceholder" label="Input Placeholder Text"></design:attribute>
+	<!-- <design:attribute name="contactHeader" label="Support Area" datasource="Designation Questions,General Support,Technical Support" description="Which support area is this for? Designation Questions, General Support, or Technical Support?"></design:attribute> -->
+</design:component>

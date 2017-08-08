@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Update the selected Lookup Id">
+	<aura:attribute name="recordId" type="Id" required="true" description="Id of the sObject selected from dropdown"/>
+	<aura:attribute name="recordName" type="String" required="true" description="Name of the sObject selected from dropdown"/>
+</aura:event>
